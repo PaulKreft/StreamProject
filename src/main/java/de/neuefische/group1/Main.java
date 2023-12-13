@@ -1,11 +1,16 @@
 package de.neuefische.group1;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         // Arrays.asList(1, 2, 3, 4, 5);
         List<Integer> listOfNumbers = new ArrayList<>() {{
             add(1);
@@ -29,5 +34,21 @@ public class Main {
 
         System.out.println(sumOfNumbers);
 
+        // ----------------------------------------------------------------------------------
+        // Bonus
+
+        System.out.println();
+
+        try (Stream<String> stream = Files.lines(Paths.get(Main.class.getResource("/students.csv").toURI()))) {
+            stream
+                    .skip(1)
+                    .filter(line -> !line.isEmpty())
+                    .distinct()
+                    .map(student -> {
+                        String[] studentData = student.split(",");
+                        return new Student(Integer.parseInt(studentData[0]), studentData[1], studentData[2], Integer.parseInt(studentData[3]));
+                    })
+                    .forEach(System.out::println);
+        }
     }
 }
